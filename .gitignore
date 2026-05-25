@@ -12,3 +12,7 @@ yarn-error.log*
 package-lock.json
 lcov-report/
 .vscode/
+
+# Local DB
+*.db
+FuturoZ_db.db
