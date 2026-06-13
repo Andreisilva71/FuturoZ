@@ -114,9 +114,11 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.get('/api-docs.json', (req, res) => res.json(swaggerSpec));
 
-// Configuração do Banco de Dados SQLite
-// Apenas faz o link com o banco criado por fora
-const db = new sqlite3.Database(path.join(__dirname, 'FuturoZ_db.db'), (err) => {
+const dbPath = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : path.join(__dirname, 'FuturoZ_db.db');
+
+const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Erro ao conectar ao banco de dados:', err.message);
   } else {

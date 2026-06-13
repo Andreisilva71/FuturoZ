@@ -61,8 +61,10 @@ async function analisarPerfilService(db, dados, apiKey) {
     throw { status: 400, message: 'Respostas não fornecidas.' };
   }
 
+  let data;
+
   if (!apiKey || apiKey === 'sua_chave_aqui') {
-    return {
+    data = {
       "GraficoPerfil": [92, 78, 85, 60, 70, 88],
       "GraficoForcas": [95, 80, 85, 75],
       "VisaoGeral": {
@@ -76,21 +78,20 @@ async function analisarPerfilService(db, dados, apiKey) {
         { "titulo": "Product Manager", "match": 85, "descricao": "Lidere o desenvolvimento de produtos que impactam milhões.", "skills": ["Estratégia", "Comunicação", "Liderança"], "icone": "🎯" }
       ],
       "Insights": [
-        { "titulo": "💡 Você é naturalmente inovador", "texto": "Suas respostas indicam que você busca constantemente formas novas de resolver problemas.", "fraseMotivadora": "O mundo precisa da sua visão!" },
+        { "titulo": "💡 Você é naturally inovador", "texto": "Suas respostas indicam que você busca constantemente formas novas de resolver problemas.", "fraseMotivadora": "O mundo precisa da sua visão!" },
         { "titulo": "👥 Trabalho em equipe te energiza", "texto": "Você prospera em ambientes colaborativos onde pode trocar ideias.", "fraseMotivadora": "Juntos chegamos mais longe!" }
       ]
     };
-  }
+  } else {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    });
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
-    generationConfig: {
-      responseMimeType: "application/json"
-    }
-  });
-
-  const prompt = `Você é um orientador vocacional especialista em carreiras de tecnologia, criatividade e negócios para a Geração Z.
+    const prompt = `Você é um orientador vocacional especialista em carreiras de tecnologia, criatividade e negócios para a Geração Z.
 Vou te passar as respostas de um usuário em um questionário vocacional. O formato é um JSON onde a chave é o ID da pergunta (ignorar o significado do ID, olhe apenas a resposta em si) e o valor é a resposta ou array de respostas escolhidas por ele.
 
 Respostas do usuário:
@@ -123,15 +124,15 @@ Instruções:
 - Carreiras: exatamente 3 carreiras ideais com match acima de 70.
 - Insights: exatamente 2 objetos de insights personalizados com frases motivadoras únicas.`;
 
-  const result = await model.generateContent(prompt);
-  const responseText = result.response.text();
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
 
-  let data;
-  try {
-    const jsonStr = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
-    data = JSON.parse(jsonStr);
-  } catch (parseError) {
-    throw { status: 500, message: "Falha ao interpretar a resposta da IA como JSON." };
+    try {
+      const jsonStr = responseText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      data = JSON.parse(jsonStr);
+    } catch (parseError) {
+      throw { status: 500, message: "Falha ao interpretar a resposta da IA como JSON." };
+    }
   }
 
   return new Promise((resolve, reject) => {
