@@ -1,6 +1,8 @@
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
@@ -8,6 +10,109 @@ const { cadastrarUsuarioService, loginUsuarioService, analisarPerfilService } = 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API FuturoZ',
+      version: '1.0.0',
+      description: 'Documentação da API FuturoZ - Descubra seu Futuro Profissional',
+    },
+    servers: [{ url: `http://localhost:${PORT}` }],
+    tags: [
+      { name: 'Autenticação', description: 'Operações de cadastro e login' },
+      { name: 'Análise de Perfil', description: 'Operações de análise com IA' },
+      { name: 'Histórico', description: 'Acesso ao histórico de perfis' },
+    ],
+    components: {
+      schemas: {
+        Usuario: {
+          type: 'object',
+          required: ['nome', 'email', 'senha'],
+          properties: {
+            id: { type: 'integer', example: 1 },
+            nome: { type: 'string', example: 'João Silva' },
+            email: { type: 'string', format: 'email', example: 'joao@example.com' },
+            senha: { type: 'string', example: 'senha123' },
+            data_criacao: { type: 'string', format: 'date-time', example: '2026-06-10T12:34:56Z' },
+          },
+        },
+        UsuarioPublico: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            nome: { type: 'string', example: 'João Silva' },
+            email: { type: 'string', format: 'email', example: 'joao@example.com' },
+            data_criacao: { type: 'string', format: 'date-time', example: '2026-06-10T12:34:56Z' },
+          },
+        },
+        Perfil: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            usuario_id: { type: 'integer', example: 1 },
+            respostas: { type: 'array', items: { type: 'string' }, example: ['Resposta 1', 'Resposta 2'] },
+            resultado_ia: { type: 'object', example: { carreira: 'Desenvolvimento', compatibilidade: 95 } },
+            data_criacao: { type: 'string', format: 'date-time', example: '2026-06-10T12:34:56Z' },
+          },
+        },
+        Credenciais: {
+          type: 'object',
+          required: ['email', 'senha'],
+          properties: {
+            email: { type: 'string', format: 'email', example: 'joao@example.com' },
+            senha: { type: 'string', example: 'senha123' },
+          },
+        },
+        AnalisarPerfilRequest: {
+          type: 'object',
+          required: ['respostas', 'usuario_id'],
+          properties: {
+            respostas: {
+              type: 'array',
+              items: { type: 'string' },
+              example: ['Gosto de trabalhar com pessoas', 'Prefiro desafios técnicos'],
+            },
+            usuario_id: { type: 'integer', example: 1 },
+          },
+        },
+        AnalisarPerfilResponse: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer', example: 1 },
+            usuario_id: { type: 'integer', example: 1 },
+            respostas: {
+              type: 'array',
+              items: { type: 'string' },
+              example: ['Gosto de trabalhar com pessoas', 'Prefiro desafios técnicos'],
+            },
+            resultado_ia: {
+              type: 'object',
+              example: {
+                carreira: 'Desenvolvimento de Software',
+                compatibilidade: 95,
+                descricao: 'Você tem alto potencial para desenvolvimento',
+              },
+            },
+            data_criacao: { type: 'string', format: 'date-time', example: '2026-06-10T12:34:56Z' },
+          },
+        },
+        Error: {
+          type: 'object',
+          properties: {
+            error: { type: 'string', example: 'Mensagem de erro' },
+          },
+        },
+      },
+    },
+  },
+  apis: ['./server.js', './routes/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get('/api-docs.json', (req, res) => res.json(swaggerSpec));
 
 // Configuração do Banco de Dados SQLite
 // Apenas faz o link com o banco criado por fora
@@ -56,7 +161,7 @@ app.get('/', (req, res) => {
  * /api/cadastro:
  *   post:
  *     summary: Cadastra um novo usuário
- *     tags: [Usuários]
+ *     tags: [Autenticação]
  *     requestBody:
  *       required: true
  *       content:
@@ -65,11 +170,23 @@ app.get('/', (req, res) => {
  *             $ref: '#/components/schemas/Usuario'
  *     responses:
  *       200:
- *         description: Usuário cadastrado
+ *         description: Usuário cadastrado com sucesso
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UsuarioPublico'
+ *       400:
+ *         description: Dados inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 app.post('/api/cadastro', async (req, res) => {
   try {
@@ -87,26 +204,32 @@ app.post('/api/cadastro', async (req, res) => {
  * /api/login:
  *   post:
  *     summary: Faz login com email e senha
- *     tags: [Usuários]
+ *     tags: [Autenticação]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               senha:
- *                 type: string
+ *             $ref: '#/components/schemas/Credenciais'
  *     responses:
  *       200:
- *         description: Usuário autenticado
+ *         description: Usuário autenticado com sucesso
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/UsuarioPublico'
+ *       400:
+ *         description: Email ou senha inválidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 app.post('/api/login', async (req, res) => {
   try {
@@ -125,30 +248,53 @@ app.post('/api/login', async (req, res) => {
  * /api/analisar-perfil:
  *   post:
  *     summary: Envia respostas para análise da IA e salva perfil
- *     tags: [Usuários]
+ *     tags: [Análise de Perfil]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               respostas:
- *                 type: array
- *                 items:
- *                   type: string
- *               usuario_id:
- *                 type: integer
+ *             $ref: '#/components/schemas/AnalisarPerfilRequest'
  *     responses:
  *       200:
- *         description: Resultado da análise
+ *         description: Análise realizada com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
+ *               $ref: '#/components/schemas/AnalisarPerfilResponse'
+ *       400:
+ *         description: Dados inválidos ou usuário não autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Não autorizado - usuário não autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erro ao processar com a IA
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 app.post('/api/analisar-perfil', async (req, res) => {
   try {
+    const { usuario_id, respostas } = req.body;
+
+    // Validar que usuario_id foi fornecido
+    if (!usuario_id) {
+      return res.status(401).json({ error: 'Você precisa estar autenticado para fazer a análise. Faça login primeiro.' });
+    }
+
+    // Validar que respostas foram fornecidas
+    if (!respostas) {
+      return res.status(400).json({ error: 'Respostas não fornecidas.' });
+    }
+
     const data = await analisarPerfilService(db, req.body, process.env.GEMINI_API_KEY);
     res.json(data);
   } catch (erro) {
@@ -163,22 +309,36 @@ app.post('/api/analisar-perfil', async (req, res) => {
  * /api/historico/{usuario_id}:
  *   get:
  *     summary: Retorna histórico de perfis de um usuário
- *     tags: [Usuários]
+ *     tags: [Histórico]
  *     parameters:
  *       - in: path
  *         name: usuario_id
  *         required: true
  *         schema:
  *           type: integer
+ *         example: 1
+ *         description: ID do usuário
  *     responses:
  *       200:
- *         description: Lista de perfis
+ *         description: Lista de perfis do usuário
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Perfil'
+ *       400:
+ *         description: Usuário não informado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erro ao buscar histórico
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 app.get('/api/historico/:usuario_id', (req, res) => {
   const usuarioId = req.params.usuario_id;

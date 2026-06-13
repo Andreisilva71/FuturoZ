@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FuturoZ - Descubra seu Futuro</title>
+  <link rel="stylesheet" href="Style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- ==================== PÁGINA INICIAL (LANDING) ==================== -->
+  <div id="pagina-landing">
+    <header>
+      <div class="container nav">
+        <nav>
+          <a href="#" class="logo" onclick="navegarPara('landing')">
+            <div class="logo-icone bg-gradiente">❤️</div>
+            <span>FuturoZ</span>
+          </a>
+          <div class="menu-desktop">
+            <a href="#problema">O Desafio</a>
+            <a href="#solucao">Solução</a>
+            <a href="#como-funciona">Como Funciona</a>
+            <a href="#" onclick="abrirHistorico(); return false;">Histórico</a>
+            <button class="btn btn-icone" onclick="toggleDarkMode()" id="btn-darkmode" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%;">🌙</button>
+            <div id="nav-auth">
+              <button class="btn btn-contorno" onclick="navegarPara('login')">Entrar</button>
+            </div>
+            <button class="btn btn-primario" onclick="navegarPara('quiz')">Começar agora</button>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <section id="hero">
+      <div class="container hero-grid">
+        <div class="hero-conteudo">
+          <div class="badge">✨ Planeje seu futuro profissional</div>
+          <h1>Descubra o Futuro que Você Está Construindo Hoje</h1>
+          <p>Reflita sobre suas escolhas de carreira através de uma análise inteligente dos seus hábitos diários e decisões atuais.</p>
+          <div class="hero-botoes">
+            <button class="btn btn-primario" onclick="navegarPara('quiz')">🚀 Começar agora</button>
+            <button class="btn btn-contorno">Saiba mais</button>
+          </div>
+          <div class="hero-features">
+            <span class="badge">🎯 Análise personalizada</span>
+            <span class="badge">📈 Projeções</span>
+          </div>
+        </div>
+        <div class="hero-imagem-container">
+          <img src="https://images.unsplash.com/photo-1771054244010-ff9c4324a665?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHBlb3BsZSUyMHdvcmtpbmclMjBsYXB0b3AlMjB0ZWNobm9sb2d5fGVufDF8fHx8MTc3NDUyNTY3MHww&ixlib=rb-4.1.0&q=80&w=1080" alt="Jovens" class="hero-imagem">
+          <div class="floating-card fc-1">
+            <div class="logo-icone bg-gradiente">🧠</div>
+            <div>
+              <strong>89%</strong><br><small>Precisão</small>
+            </div>
+          </div>
+          <div class="floating-card fc-2">
+            <div class="logo-icone bg-gradiente">📈</div>
+            <div>
+              <strong>12k+</strong><br><small>Usuários</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problema" style="background: var(--cor-fundo-alt)">
+      <div class="container">
+        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+          <div class="badge">⚠️ O Desafio da Geração Z</div>
+          <h2>Por que escolher uma carreira <span class="texto-gradiente">nunca foi tão difícil?</span></h2>
+          <p>A Geração Z enfrenta desafios únicos em um mundo hiperconectado.</p>
+        </div>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icone" style="background: #fff7ed; color: #f97316;">⚖️</div>
+            <h3>Comparação Constante</h3>
+            <p>Redes sociais criando expectativas irreais.</p>
+          </div>
+          <div class="card">
+            <div class="card-icone" style="background: #fef2f2; color: #ef4444;">🛑</div>
+            <h3>Pressão Externa</h3>
+            <p>Família e sociedade ditando o "sucesso".</p>
+          </div>
+          <div class="card">
+            <div class="card-icone" style="background: #faf5ff; color: #a855f7;">🧠</div>
+            <h3>Paralisia por Análise</h3>
+            <p>Excesso de opções gerando indecisão.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solucao">
+      <div class="container">
+        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
+          <div class="badge">✨ Tecnologia que Transforma</div>
+          <h2>Por que usar <span class="texto-gradiente">tecnologia para sua carreira?</span></h2>
+        </div>
+        <div class="grid-cards">
+          <div class="card">
+            <div class="card-icone bg-gradiente">🤖</div>
+            <h3>IA Inteligente</h3>
+            <p>Algoritmos analisam suas respostas para identificar padrões.</p>
+          </div>
+          <div class="card">
+            <div class="card-icone bg-gradiente">💬</div>
+            <h3>Interação Natural</h3>
+            <p>Conversas fluidas adaptadas ao seu perfil.</p>
+          </div>
+          <div class="card">
+            <div class="card-icone bg-gradiente">📊</div>
+            <h3>Análise de Dados</h3>
+            <p>Hábitos transformados em insights práticos.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona" class="bg-gradiente">
+      <div class="container" style="text-align: center; color: white;">
+        <h2 style="font-size: 3rem; margin-bottom: 2rem;">Pronto para descobrir seu caminho?</h2>
+        <button class="btn" style="background: white; color: var(--cor-primaria);" onclick="navegarPara('quiz')">Começar questionário gratuito</button>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container footer-grid">
+        <div>
+          <div class="logo" style="margin-bottom: 1rem;">
+            <div class="logo-icone bg-gradiente">❤️</div> FuturoZ
+          </div>
+          <p style="color: #94a3b8;">Ajudando a Geração Z a descobrir seu futuro profissional através de autoconhecimento e tecnologia.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Links Rápidos</h3>
+          <ul>
+            <li><a href="#">Sobre Nós</a></li>
+            <li><a href="#">Como Funciona</a></li>
+            <li><a href="#">Carreiras</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h3>Contato</h3>
+          <ul>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Suporte</a></li>
+            <li><a href="#">Privacidade</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== PÁGINA DE LOGIN / CADASTRO ==================== -->
+  <div id="pagina-login" class="escondido">
+    <div class="auth-wrapper">
+      <button class="btn btn-contorno" onclick="navegarPara('landing')" style="position: absolute; top: 2rem; left: 2rem;">← Voltar</button>
+      <div class="auth-card">
+        <div class="logo" style="justify-content: center; margin-bottom: 2rem;">
+          <div class="logo-icone bg-gradiente">❤️</div>
+          <span style="font-size: 1.5rem; font-weight: 700;">FuturoZ</span>
+        </div>
+
+        <!-- Abas Login / Cadastro -->
+        <div class="auth-tabs">
+          <button id="tab-btn-login" class="auth-tab-btn ativo" onclick="alternarAuthTab('login')">Entrar</button>
+          <button id="tab-btn-cadastro" class="auth-tab-btn" onclick="alternarAuthTab('cadastro')">Criar Conta</button>
+        </div>
+
+        <!-- Formulário de Login -->
+        <div id="form-login">
+          <div class="form-grupo">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="seu@email.com" class="form-input">
+          </div>
+          <div class="form-grupo">
+            <label>Senha</label>
+            <input type="password" id="login-senha" placeholder="Sua senha" class="form-input">
+          </div>
+          <p id="login-erro" class="form-erro escondido"></p>
+          <button class="btn btn-primario" style="width: 100%;" onclick="fazerLogin()">🔑 Entrar</button>
+        </div>
+
+        <!-- Formulário de Cadastro -->
+        <div id="form-cadastro" class="escondido">
+          <div class="form-grupo">
+            <label>Nome</label>
+            <input type="text" id="cadastro-nome" placeholder="Seu nome completo" class="form-input">
+          </div>
+          <div class="form-grupo">
+            <label>Email</label>
+            <input type="email" id="cadastro-email" placeholder="seu@email.com" class="form-input">
+          </div>
+          <div class="form-grupo">
+            <label>Senha</label>
+            <input type="password" id="cadastro-senha" placeholder="Crie uma senha" class="form-input">
+          </div>
+          <p id="cadastro-erro" class="form-erro escondido"></p>
+          <button class="btn btn-primario" style="width: 100%;" onclick="fazerCadastro()">🚀 Criar Conta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA DO QUIZ ==================== -->
+  <div id="pagina-quiz" class="escondido">
+    <div class="quiz-header container">
+      <button class="btn btn-contorno" onclick="navegarPara('landing')">← Sair</button>
+      <span style="float: right; margin-top: 0.5rem;" id="quiz-contador">Pergunta 1 de 10</span>
+      <div class="quiz-progresso-bar">
+        <div class="quiz-progresso-fill" id="quiz-progresso" style="width: 10%;"></div>
+      </div>
+    </div>
+    
+    <div class="quiz-container">
+      <div class="badge">✨ Pergunta</div>
+      <h2 id="pergunta-titulo" style="font-size: 2rem; margin-bottom: 2rem;">Carregando...</h2>
+      
+      <div id="opcoes-container">
+        <!-- Gerado via JS -->
+      </div>
+
+      <div class="quiz-nav">
+        <button class="btn btn-contorno" id="btn-voltar" onclick="perguntaAnterior()">Voltar</button>
+        <button class="btn btn-primario" id="btn-proxima" onclick="proximaPergunta()">Próxima</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA DE RESULTADOS ==================== -->
+  <div id="pagina-resultados" class="escondido">
+    <!-- TELA DE CARREGAMENTO IA -->
+    <div id="loading-ia" class="loading-container">
+      <div class="spinner"></div>
+      <h2 style="font-size: 2rem; margin-bottom: 1rem;">A IA está analisando seu perfil...</h2>
+      <p style="color: var(--cor-texto-claro);">Isso pode levar alguns segundos. Estamos mapeando suas respostas e buscando as melhores carreiras.</p>
+    </div>
+
+    <!-- CONTEÚDO DOS RESULTADOS -->
+    <div id="conteudo-resultados" class="escondido">
+      <div class="resultados-header bg-gradiente">
+        <div class="container">
+          <div class="badge" style="background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3);">✨ Análise Completa</div>
+          <h1 style="font-size: 3rem; margin: 1rem 0;">Seu Futuro Está Tomando Forma</h1>
+          <p style="max-width: 600px; margin: 0 auto; opacity: 0.9;">Com base nas suas respostas, identificamos padrões únicos que revelam seus talentos.</p>
+        </div>
+      </div>
+
+    <div class="tabs">
+      <button class="tab-btn ativo" onclick="mudarTab('visao-geral')">🧠 Visão Geral</button>
+      <button class="tab-btn" onclick="mudarTab('carreiras')">🚀 Carreiras</button>
+      <button class="tab-btn" onclick="mudarTab('insights')">💡 Insights</button>
+    </div>
+
+    <div id="tab-visao-geral" class="tab-conteudo ativo">
+      <div class="estatisticas-grid" id="estatisticas-container">
+        <div class="estatistica-card">
+          <div class="estatistica-valor">92%</div>
+          <h3>Índice Criativo</h3>
+          <p>Muito acima da média</p>
+        </div>
+        <div class="estatistica-card">
+          <div class="estatistica-valor">78%</div>
+          <h3>Pensamento Analítico</h3>
+          <p>Acima da média</p>
+        </div>
+        <div class="estatistica-card">
+          <div class="estatistica-valor">85%</div>
+          <h3>Habilidade Social</h3>
+          <p>Muito desenvolvida</p>
+        </div>
+      </div>
+
+      <div class="charts-container">
+        <div class="chart-card">
+          <h3>Seu Perfil de Personalidade</h3>
+          <p>Mapeamento das suas principais características profissionais</p>
+          <canvas id="perfilChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Suas Principais Forças</h3>
+          <p>Características que se destacam no seu perfil</p>
+          <canvas id="forcasChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-carreiras" class="tab-conteudo">
+      <div id="lista-carreiras">
+        <!-- Preenchido via JS -->
+      </div>
+    </div>
+
+    <div id="tab-insights" class="tab-conteudo">
+      <div class="card" style="margin-bottom: 1rem; border-left: 4px solid #eab308;">
+        <h3>💡 Você é naturalmente inovador</h3>
+        <p>Suas respostas indicam que você busca constantemente formas novas de resolver problemas.</p>
+      </div>
+      <div class="card" style="margin-bottom: 1rem; border-left: 4px solid #3b82f6;">
+        <h3>👥 Trabalho em equipe te energiza</h3>
+        <p>Você prospera em ambientes colaborativos onde pode trocar ideias.</p>
+      </div>
+    </div>
+
+    <div class="container" style="text-align: center; margin: 4rem auto; padding-bottom: 4rem;">
+      <button class="btn btn-contorno" onclick="navegarPara('quiz')">🔄 Refazer questionário</button>
+      <button class="btn btn-primario" onclick="navegarPara('landing')">🏠 Voltar ao início</button>
+    </div>
+    </div> <!-- Fim do conteudo-resultados -->
+  </div>
+
+  <!-- ==================== PÁGINA DE HISTÓRICO ==================== -->
+  <div id="pagina-historico" class="escondido">
+    <div class="container" style="padding-top: 4rem; padding-bottom: 4rem; min-height: 100vh;">
+      <button class="btn btn-contorno" onclick="navegarPara('landing')" style="margin-bottom: 2rem;">← Voltar</button>
+      
+      <div class="badge">🕰️ Seu Histórico</div>
+      <h1 style="font-size: 3rem; margin-bottom: 2rem;">Análises Anteriores</h1>
+      
+      <div id="loading-historico" class="escondido" style="text-align: center; padding: 2rem;">
+        <div class="spinner"></div>
+        <p>Buscando seu histórico...</p>
+      </div>
+
+      <div id="lista-historico" class="grid-cards">
+        <!-- Preenchido via JS -->
+      </div>
+      
+      <div id="historico-vazio" class="escondido card" style="text-align: center; padding: 3rem;">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Você ainda não fez nenhuma análise!</h3>
+        <p style="color: var(--cor-texto-claro); margin-bottom: 2rem;">Faça o questionário para descobrir suas carreiras ideais.</p>
+        <button class="btn btn-primario" onclick="navegarPara('quiz')">🚀 Começar Questionário</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
