@@ -186,7 +186,6 @@ button {
 .btn-contorno {
   border: 1px solid var(--cor-borda);
   background: transparent;
-  color: var(--cor-texto-escuro);
 }
 
 .btn-contorno:hover {
@@ -242,48 +241,20 @@ nav {
   justify-content: center;
 }
 
-.nav-menu {
+.menu-desktop {
   display: flex;
   gap: 2rem;
   align-items: center;
 }
 
-.nav-menu a {
+.menu-desktop a {
   color: var(--cor-texto-escuro);
   opacity: 0.8;
   transition: opacity 0.3s;
 }
 
-.nav-menu a:hover {
+.menu-desktop a:hover {
   opacity: 1;
-}
-
-.nav-actions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.hide-mobile {
-  display: inline;
-}
-
-/* Hamburguer button */
-.menu-hamburger {
-  display: none;
-  font-size: 1.75rem;
-  color: var(--cor-texto-escuro);
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: var(--raio-borda-sm);
-  z-index: 110;
-  transition: transform 0.2s ease;
-  line-height: 1;
-}
-
-.menu-hamburger:focus-visible {
-  outline: 2px solid var(--cor-primaria);
-  outline-offset: 2px;
 }
 
 /* Sections */
@@ -308,21 +279,9 @@ section {
 }
 
 .hero-conteudo h1 {
-  font-size: clamp(2rem, 6vw, 4rem);
+  font-size: 4rem;
   line-height: 1.2;
   margin-bottom: 1.5rem;
-}
-
-section h2 {
-  font-size: clamp(1.8rem, 5vw, 3rem);
-  line-height: 1.2;
-  margin-bottom: 1.5rem;
-}
-
-#pagina-resultados h1,
-#pagina-historico h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-  line-height: 1.2;
 }
 
 .hero-conteudo p {
@@ -366,7 +325,9 @@ section h2 {
   box-shadow: var(--sombra-lg);
 }
 
-/* Floating cards removed */
+.floating-card { display: none; }
+.fc-1 { display: none; }
+.fc-2 { display: none; }
 
 /* Grid Cards (Problemas, Soluções, Como Funciona) */
 .grid-cards {
@@ -687,171 +648,13 @@ footer {
 }
 
 /* Responsividade */
-/* Breakpoint Intermediário (Tablet) */
-@media (max-width: 1024px) {
-  .hero-grid {
-    gap: 1.5rem;
-  }
-  
-  .grid-cards {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  .footer-grid > div:first-child {
-    grid-column: span 2;
-  }
-}
-
-/* Breakpoint Mobile */
 @media (max-width: 768px) {
   .hero-grid { grid-template-columns: 1fr; text-align: center; }
-  .hero-botoes { justify-content: center; flex-wrap: wrap; }
-  .hero-features { justify-content: center; }
+  .hero-botoes { justify-content: center; }
+  .menu-desktop { display: none; }
   .carreira-item { flex-direction: column; text-align: center; }
-  .carreira-match { min-width: auto; width: 100%; }
   .footer-grid { grid-template-columns: 1fr; }
-  
-  #hero {
-    min-height: auto;
-    padding-top: 8rem;
-    padding-bottom: 4rem;
-  }
-  
-  .quiz-header {
-    position: relative;
-    top: auto;
-  }
-
-  .menu-hamburger {
-    display: block;
-  }
-
-  .nav-menu {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 280px;
-    height: 100vh;
-    background: var(--cor-fundo);
-    border-left: 1px solid var(--cor-borda);
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 6rem 1.5rem 2rem 1.5rem;
-    gap: 1.5rem;
-    transform: translateX(100%);
-    visibility: hidden;
-    pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s;
-    z-index: 100;
-    box-shadow: var(--sombra-lg);
-  }
-
-  .nav-menu.aberto {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-  }
-
-  .nav-menu a {
-    font-size: 1.1rem;
-    padding: 0.5rem 0;
-    width: 100%;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    opacity: 0.8;
-  }
-  
-  body.dark-mode .nav-menu a {
-    border-bottom-color: rgba(255, 255, 255, 0.05);
-  }
-  
-  .nav-menu a:hover {
-    opacity: 1;
-  }
-
-  .nav-menu #btn-darkmode {
-    align-self: flex-start;
-    margin-top: 0.5rem;
-  }
-
-  /* Compact header actions on mobile */
-  .nav-actions {
-    gap: 0.5rem;
-  }
-
-  .nav-actions .btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-  }
-
-  .nav-usuario {
-    gap: 0.35rem;
-  }
-
-  .nav-usuario span {
-    font-size: 0;
-  }
-
-  .nav-usuario span strong {
-    font-size: 0.85rem;
-    max-width: 60px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .nav-usuario .btn {
-    padding: 0.35rem 0.6rem;
-    font-size: 0.8rem;
-  }
-}
-
-/* Ajustes para Mobile Pequeno */
-@media (max-width: 480px) {
-  .quiz-container {
-    padding: 1.5rem;
-    margin: 1.5rem auto;
-  }
-
-  .chart-card {
-    padding: 1.25rem;
-  }
-
-  .chart-card canvas {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  .hide-mobile {
-    display: none;
-  }
-
-  .logo span {
-    font-size: 1.2rem;
-  }
-
-  .logo-icone {
-    width: 30px;
-    height: 30px;
-  }
-
-  .nav-actions {
-    gap: 0.25rem;
-  }
-
-  .nav-actions .btn {
-    padding: 0.35rem 0.6rem;
-    font-size: 0.75rem;
-  }
+  .hero-conteudo h1 { font-size: 2.5rem; }
 }
 
 /* ==================== AUTENTICAÇÃO (LOGIN / CADASTRO) ==================== */
