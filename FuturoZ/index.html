@@ -16,20 +16,28 @@
       <div class="container nav">
         <nav>
           <a href="#" class="logo" onclick="navegarPara('landing')">
-            <img src="rocket.png" alt="FuturoZ" class="logo-img">
+            <img src="./rocket.png" alt="FuturoZ" class="logo-img">
             <span>FuturoZ</span>
           </a>
-          <div class="menu-desktop">
+          
+          <div class="nav-menu">
             <a href="#problema">O Desafio</a>
             <a href="#solucao">Solução</a>
             <a href="#como-funciona">Como Funciona</a>
             <a href="#" onclick="abrirHistorico(); return false;">Histórico</a>
             <button class="btn btn-icone" onclick="toggleDarkMode()" id="btn-darkmode" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%;">🌙</button>
+          </div>
+
+          <div class="nav-actions">
             <div id="nav-auth">
               <button class="btn btn-contorno" onclick="navegarPara('login')">Entrar</button>
             </div>
-            <button class="btn btn-primario" onclick="navegarPara('quiz')">Começar agora</button>
+            <button class="btn btn-primario" onclick="navegarPara('quiz')">Começar<span class="hide-mobile">&nbsp;agora</span></button>
           </div>
+
+          <button class="menu-hamburger" id="btn-hamburger" aria-label="Abrir menu de navegação" aria-expanded="false">
+            ☰
+          </button>
         </nav>
       </div>
     </header>
@@ -51,18 +59,7 @@
         </div>
         <div class="hero-imagem-container">
           <img src="https://images.unsplash.com/photo-1771054244010-ff9c4324a665?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHBlb3BsZSUyMHdvcmtpbmclMjBsYXB0b3AlMjB0ZWNobm9sb2d5fGVufDF8fHx8MTc3NDUyNTY3MHww&ixlib=rb-4.1.0&q=80&w=1080" alt="Jovens" class="hero-imagem">
-          <div class="floating-card fc-1">
-            <div class="logo-icone bg-gradiente">🧠</div>
-            <div>
-              <strong>89%</strong><br><small>Precisão</small>
-            </div>
-          </div>
-          <div class="floating-card fc-2">
-            <div class="logo-icone bg-gradiente">📈</div>
-            <div>
-              <strong>12k+</strong><br><small>Usuários</small>
-            </div>
-          </div>
+
         </div>
       </div>
     </section>
@@ -122,7 +119,7 @@
 
     <section id="como-funciona" class="bg-gradiente">
       <div class="container" style="text-align: center; color: white;">
-        <h2 style="font-size: 3rem; margin-bottom: 2rem;">Pronto para descobrir seu caminho?</h2>
+        <h2 style="margin-bottom: 2rem;">Pronto para descobrir seu caminho?</h2>
         <button class="btn" style="background: white; color: var(--cor-primaria);" onclick="navegarPara('quiz')">Começar questionário gratuito</button>
       </div>
     </section>
@@ -172,7 +169,7 @@
         </div>
 
         <!-- Formulário de Login -->
-        <div id="form-login">
+        <form id="form-login" onsubmit="fazerLogin(); return false;">
           <div class="form-grupo">
             <label>Email</label>
             <input type="email" id="login-email" placeholder="seu@email.com" class="form-input">
@@ -182,11 +179,11 @@
             <input type="password" id="login-senha" placeholder="Sua senha" class="form-input">
           </div>
           <p id="login-erro" class="form-erro escondido"></p>
-          <button class="btn btn-primario" style="width: 100%;" onclick="fazerLogin()">🔑 Entrar</button>
-        </div>
+          <button type="submit" class="btn btn-primario" style="width: 100%;">🔑 Entrar</button>
+        </form>
 
         <!-- Formulário de Cadastro -->
-        <div id="form-cadastro" class="escondido">
+        <form id="form-cadastro" class="escondido" onsubmit="fazerCadastro(); return false;">
           <div class="form-grupo">
             <label>Nome</label>
             <input type="text" id="cadastro-nome" placeholder="Seu nome completo" class="form-input">
@@ -200,8 +197,8 @@
             <input type="password" id="cadastro-senha" placeholder="Crie uma senha" class="form-input">
           </div>
           <p id="cadastro-erro" class="form-erro escondido"></p>
-          <button class="btn btn-primario" style="width: 100%;" onclick="fazerCadastro()">🚀 Criar Conta</button>
-        </div>
+          <button type="submit" class="btn btn-primario" style="width: 100%;">🚀 Criar Conta</button>
+        </form>
       </div>
     </div>
   </div>
@@ -245,7 +242,7 @@
       <div class="resultados-header bg-gradiente">
         <div class="container">
           <div class="badge" style="background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3);">✨ Análise Completa</div>
-          <h1 style="font-size: 3rem; margin: 1rem 0;">Seu Futuro Está Tomando Forma</h1>
+          <h1 style="margin: 1rem 0;">Seu Futuro Está Tomando Forma</h1>
           <p style="max-width: 600px; margin: 0 auto; opacity: 0.9;">Com base nas suas respostas, identificamos padrões únicos que revelam seus talentos.</p>
         </div>
       </div>
@@ -319,7 +316,7 @@
       <button class="btn btn-contorno" onclick="navegarPara('landing')" style="margin-bottom: 2rem;">← Voltar</button>
       
       <div class="badge">🕰️ Seu Histórico</div>
-      <h1 style="font-size: 3rem; margin-bottom: 2rem;">Análises Anteriores</h1>
+      <h1 style="margin-bottom: 2rem;">Análises Anteriores</h1>
       
       <div id="loading-historico" class="escondido" style="text-align: center; padding: 2rem;">
         <div class="spinner"></div>
