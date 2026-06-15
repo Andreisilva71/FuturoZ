@@ -260,10 +260,12 @@ const perguntas = [
   },
   {
     id: 9,
-    tipo: 'escala',
+    tipo: 'escolha-unica',
     pergunta: 'Você se considera uma pessoa mais analítica (lógica/dados) ou mais intuitiva/criativa?',
-    minLabel: 'Analítica',
-    maxLabel: 'Criativa'
+    opcoes: [
+      'Analítica (lógica/dados)',
+      'Intuitiva/criativa'
+    ]
   },
   {
     id: 10,
