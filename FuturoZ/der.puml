@@ -8,25 +8,25 @@ skinparam EntityBorderColor #333333
 
 ' Entidade Usuarios
 entity "usuarios" as usuarios {
-  * id : INTEGER <<PK>>
+  * id : INTEGER <<PK, AUTOINCREMENT>>
   --
-  * nome : TEXT
-  * email : TEXT <<UNIQUE>>
-  * senha : TEXT
-  data_criacao : DATETIME
+  * nome : TEXT <<NOT NULL>>
+  * email : TEXT <<UNIQUE, NOT NULL>>
+  * senha : TEXT <<NOT NULL>>
+  * data_criacao : DATETIME <<DEFAULT CURRENT_TIMESTAMP>>
 }
 
 ' Entidade Perfis
 entity "perfis" as perfis {
-  * id : INTEGER <<PK>>
+  * id : INTEGER <<PK, AUTOINCREMENT>>
   --
-  usuario_id : INTEGER <<FK>>
-  * respostas : TEXT
-  * resultado_ia : TEXT
-  data_criacao : DATETIME
+  usuario_id : INTEGER <<FK, NULL>>
+  * respostas : TEXT <<JSON>>
+  * resultado_ia : TEXT <<JSON>>
+  * data_criacao : DATETIME <<DEFAULT CURRENT_TIMESTAMP>>
 }
 
 ' Relacionamentos
-usuarios ||--o{ perfis : "possui"
+usuarios ||--o{ perfis : "possui (ON DELETE CASCADE)"
 
 @enduml
