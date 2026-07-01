@@ -132,7 +132,15 @@ const db = new sqlite3.Database(dbPath, (err) => {
         email TEXT UNIQUE NOT NULL,
         senha TEXT NOT NULL,
         data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP
-      )`, (err) => { if (!err) console.log('  ✅ Tabela usuarios OK'); });
+      )`, (err) => {
+        if (!err) {
+          console.log('  ✅ Tabela usuarios OK');
+          // Tenta adicionar a coluna plano de forma resiliente
+          db.run("ALTER TABLE usuarios ADD COLUMN plano TEXT DEFAULT 'free'", (alterErr) => {
+            // Se der erro, provavelmente a coluna já existe, ignoramos
+          });
+        }
+      });
 
       db.run(`CREATE TABLE IF NOT EXISTS perfis (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -297,11 +305,156 @@ app.post('/api/analisar-perfil', async (req, res) => {
       return res.status(400).json({ error: 'Respostas não fornecidas.' });
     }
 
-    const data = await analisarPerfilService(db, req.body, process.env.GEMINI_API_KEY);
-    res.json(data);
+    // Buscar o plano do usuário no banco de dados para validar limites do plano gratuito
+    db.get('SELECT plano FROM usuarios WHERE id = ?', [usuario_id], (err, user) => {
+      if (err) {
+        return res.status(500).json({ error: 'Erro interno ao validar o plano do usuário.' });
+      }
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
+      }
+
+      const plano = user.plano || 'free';
+
+      if (plano === 'free') {
+        // Verificar se já possui algum perfil vocacional no banco de dados
+        db.get('SELECT id FROM perfis WHERE usuario_id = ?', [usuario_id], async (err, perfil) => {
+          if (err) {
+            return res.status(500).json({ error: 'Erro interno ao verificar histórico.' });
+          }
+          if (perfil) {
+            return res.status(403).json({ error: 'Você já possui um relatório de perfil. Assine o Plano Pro para obter relatórios ilimitados!' });
+          }
+
+          // Primeiro questionário do usuário gratuito
+          executarAnalise();
+        });
+      } else {
+        // Usuário Pro tem relatórios ilimitados
+        executarAnalise();
+      }
+    });
+
+    const executarAnalise = async () => {
+      try {
+        const data = await analisarPerfilService(db, req.body, process.env.GEMINI_API_KEY);
+        res.json(data);
+      } catch (erro) {
+        res.status(erro.status || 500).json({ error: erro.message || "Erro ao processar as respostas com a Inteligência Artificial." });
+      }
+    };
+
   } catch (erro) {
     res.status(erro.status || 500).json({ error: erro.message || "Erro ao processar as respostas com a Inteligência Artificial." });
   }
+});
+
+// ==================== ROTAS PREMIUM (PRO) ====================
+
+// Rota para assinar o plano Pro
+app.post('/api/usuarios/assinar-pro', (req, res) => {
+  const { usuario_id } = req.body;
+  if (!usuario_id) {
+    return res.status(400).json({ error: 'Usuário não informado.' });
+  }
+
+  db.run('UPDATE usuarios SET plano = ? WHERE id = ?', ['pro', usuario_id], function(err) {
+    if (err) {
+      console.error('Erro ao assinar plano pro:', err);
+      return res.status(500).json({ error: 'Erro interno do servidor ao atualizar assinatura.' });
+    }
+
+    db.get('SELECT id, nome, email, plano FROM usuarios WHERE id = ?', [usuario_id], (err, row) => {
+      if (err || !row) {
+        return res.status(500).json({ error: 'Erro ao obter dados do usuário atualizado.' });
+      }
+      console.log(`  🚀 Usuário assinou o Plano Pro! ID: ${row.id} | Nome: ${row.nome}`);
+      res.json(row);
+    });
+  });
+});
+
+// Rota de Chat de Orientação Vocacional IA (exclusiva Pro)
+app.post('/api/chat', async (req, res) => {
+  const { usuario_id, message } = req.body;
+
+  if (!usuario_id) {
+    return res.status(401).json({ error: 'Você precisa estar autenticado.' });
+  }
+
+  if (!message || message.trim() === '') {
+    return res.status(400).json({ error: 'Mensagem vazia.' });
+  }
+
+  // 1. Verificar se o usuário é Pro
+  db.get('SELECT plano, nome FROM usuarios WHERE id = ?', [usuario_id], (err, user) => {
+    if (err || !user) {
+      return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+    }
+
+    if (user.plano !== 'pro') {
+      return res.status(403).json({ error: 'O Chat com IA é exclusivo para membros do Plano Pro.' });
+    }
+
+    // 2. Buscar último perfil vocacional para contextualização
+    db.get('SELECT resultado_ia FROM perfis WHERE usuario_id = ? ORDER BY data_criacao DESC LIMIT 1', [usuario_id], async (err, perfil) => {
+      let contextoVocacional = '';
+      if (perfil && perfil.resultado_ia) {
+        try {
+          const resultado = JSON.parse(perfil.resultado_ia);
+          const carreirasStr = (resultado.Carreiras || []).map(c => `- ${c.titulo} (${c.match}% de compatibilidade): ${c.descricao}`).join('\n');
+          const insightsStr = (resultado.Insights || []).map(i => `- ${i.titulo}: ${i.texto}`).join('\n');
+          contextoVocacional = `
+Você sabe que o usuário fez o teste vocacional do FuturoZ.
+Nome do usuário: ${user.nome}
+O perfil dele retornou os seguintes resultados:
+Carreiras sugeridas:
+${carreirasStr}
+
+Insights de personalidade:
+${insightsStr}
+`;
+        } catch (e) {
+          console.error("Erro ao ler JSON de perfil para o chat:", e);
+        }
+      }
+
+      // 3. Chamar a API do Gemini
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey || apiKey === 'sua_chave_aqui') {
+        // Fallback inteligente caso a chave não esteja configurada
+        const mockResponses = [
+          `Olá, ${user.nome.split(' ')[0]}! Como seu orientador vocacional do FuturoZ Pro, estou aqui para ajudar você a trilhar seu caminho. Com base nas suas principais características, que dúvidas você tem sobre as carreiras sugeridas?`,
+          "Excelente pergunta! O mercado de trabalho atual exige tanto conhecimento prático (hard skills) quanto inteligência interpessoal. Recomendo focar no aprendizado contínuo e na criação de projetos pessoais para montar um portfólio bacana.",
+          "O caminho para o desenvolvimento profissional envolve experimentar e aprender com os erros. No seu perfil Pro, vejo grande potencial de adaptação. Que tipo de ambiente de trabalho você se imagina daqui a 5 anos?",
+          "Com certeza! Para atuar nessas áreas em alta, construir conexões profissionais (networking) em comunidades online ou no LinkedIn é super importante. Posso te dar dicas de como abordar profissionais dessas áreas se quiser."
+        ];
+        const mockText = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+        return res.json({ response: mockText });
+      }
+
+      try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+        const prompt = `Você é o Orientador Vocacional IA do FuturoZ Pro, um assistente inteligente, acolhedor e dinâmico, focado na Geração Z.
+Seu objetivo é conversar com o usuário sobre sua carreira, dar conselhos práticos de estudo, mercado e ajudá-lo a entender suas forças.
+Seja breve nas respostas (no máximo 2 a 3 parágrafos), use emojis, seja direto e empático. Use uma linguagem moderna e motivadora.
+
+${contextoVocacional}
+
+Mensagem do usuário: "${message}"
+
+Responda diretamente ao usuário.`;
+
+        const result = await model.generateContent(prompt);
+        res.json({ response: result.response.text() });
+      } catch (chatError) {
+        console.error("Erro na chamada de IA do chat:", chatError);
+        res.status(500).json({ error: "Erro ao gerar resposta com a IA." });
+      }
+    });
+  });
 });
 
 // ==================== ROTA DE HISTÓRICO ====================

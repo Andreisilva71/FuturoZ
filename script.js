@@ -43,9 +43,10 @@ function atualizarNavAuth() {
   const navAuth = document.getElementById('nav-auth');
   if (!navAuth) return;
   if (usuarioLogado) {
+    const isPro = usuarioLogado.plano === 'pro';
     navAuth.innerHTML = `
       <div class="nav-usuario">
-        <span>Olá, <strong>${usuarioLogado.nome.split(' ')[0]}</strong> 👋</span>
+        <span>Olá, <strong>${usuarioLogado.nome.split(' ')[0]}</strong> ${isPro ? '<span class="badge-pro-nav">PRO</span>' : '👋'}</span>
         <button class="btn btn-contorno" onclick="fazerLogout()">Sair</button>
       </div>
     `;
@@ -143,29 +144,240 @@ atualizarNavAuth();
 // ==================== NAVEGAÇÃO ====================
 function navegarPara(pagina) {
   // Verificar se o usuário está tentando acessar o quiz sem estar autenticado
-  if (pagina === 'quiz' && !usuarioLogado) {
-    alert('⚠️ Você precisa fazer login antes de começar o questionário!');
-    navegarPara('login');
-    alternarAuthTab('login');
-    return;
+  if (pagina === 'quiz') {
+    if (!usuarioLogado) {
+      alert('⚠️ Você precisa fazer login antes de começar o questionário!');
+      navegarPara('login');
+      alternarAuthTab('login');
+      return;
+    }
+
+    if (usuarioLogado.plano !== 'pro') {
+      // Validar histórico antes de permitir começar
+      fetch(`/api/historico/${usuarioLogado.id}`)
+        .then(res => res.json())
+        .then(historico => {
+          if (historico && historico.length > 0) {
+            alert('🔒 Você já possui um relatório vocacional! Assine o Plano Pro para refazer o questionário quantas vezes quiser.');
+            navegarPara('pro');
+          } else {
+            executarNavegacao('quiz');
+          }
+        })
+        .catch(err => {
+          console.error("Erro ao validar histórico:", err);
+          executarNavegacao('quiz');
+        });
+      return;
+    }
   }
 
+  executarNavegacao(pagina);
+}
+
+function executarNavegacao(pagina) {
   // Esconder todas as páginas
   document.getElementById('pagina-landing').classList.add('escondido');
   document.getElementById('pagina-quiz').classList.add('escondido');
   document.getElementById('pagina-resultados').classList.add('escondido');
   document.getElementById('pagina-login').classList.add('escondido');
   document.getElementById('pagina-historico').classList.add('escondido');
+  document.getElementById('pagina-pro').classList.add('escondido');
+  document.getElementById('pagina-chat').classList.add('escondido');
 
   // Mostrar página selecionada
-  document.getElementById(`pagina-${pagina}`).classList.remove('escondido');
+  const elem = document.getElementById(`pagina-${pagina}`);
+  if (elem) elem.classList.remove('escondido');
   
   // Rolar para o topo
   window.scrollTo(0, 0);
 
-  // Inicializar dados se for o quiz
+  // Inicializações por página
   if (pagina === 'quiz') {
     iniciarQuiz();
+  } else if (pagina === 'pro') {
+    const btnAction = document.getElementById('btn-pro-action');
+    if (btnAction) {
+      if (usuarioLogado && usuarioLogado.plano === 'pro') {
+        btnAction.innerText = 'Você já é Pro! 🚀 Ir para o Chat';
+        btnAction.disabled = false;
+        btnAction.onclick = () => navegarPara('chat');
+      } else {
+        btnAction.innerText = 'Assinar Pro Agora';
+        btnAction.disabled = false;
+        btnAction.onclick = () => assinarPro();
+      }
+    }
+  } else if (pagina === 'chat') {
+    iniciarChatIA();
+  }
+}
+
+// ==================== LÓGICA DO PLANO PRO & CHAT IA ====================
+
+async function assinarPro() {
+  if (!usuarioLogado) {
+    alert('⚠️ Você precisa fazer login ou criar uma conta antes de assinar o Plano Pro!');
+    navegarPara('login');
+    alternarAuthTab('login');
+    return;
+  }
+
+  const btnAction = document.getElementById('btn-pro-action');
+  if (btnAction) {
+    btnAction.innerText = 'Processando Assinatura... 💳';
+    btnAction.disabled = true;
+  }
+
+  try {
+    const response = await fetch('/api/usuarios/assinar-pro', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ usuario_id: usuarioLogado.id })
+    });
+
+    if (!response.ok) {
+      throw new Error('Falha ao processar assinatura.');
+    }
+
+    const usuarioAtualizado = await response.json();
+    
+    // Atualizar usuário localmente
+    usuarioLogado = usuarioAtualizado;
+    localStorage.setItem('usuario', JSON.stringify(usuarioLogado));
+    
+    // Atualizar nav
+    atualizarNavAuth();
+
+    alert('🎉 Parabéns! Você agora é um assinante do FuturoZ Pro! Aproveite o Chat com IA e relatórios ilimitados.');
+    
+    // Redireciona para o Chat IA
+    navegarPara('chat');
+    
+  } catch (error) {
+    alert('❌ Ocorreu um erro ao assinar. Tente novamente.');
+    console.error(error);
+    if (btnAction) {
+      btnAction.innerText = 'Assinar Pro Agora';
+      btnAction.disabled = false;
+    }
+  }
+}
+
+function abrirChat() {
+  if (!usuarioLogado) {
+    alert('⚠️ Você precisa fazer login para acessar o Chat IA!');
+    navegarPara('login');
+    alternarAuthTab('login');
+    return;
+  }
+  
+  if (usuarioLogado.plano !== 'pro') {
+    alert('🔒 O Chat com IA é exclusivo para assinantes do Plano Pro!');
+    navegarPara('pro');
+    return;
+  }
+  
+  navegarPara('chat');
+}
+
+async function iniciarChatIA() {
+  const container = document.getElementById('chat-messages-container');
+  if (!container) return;
+  
+  container.innerHTML = `
+    <div style="text-align: center; color: var(--cor-texto-claro); font-size: 0.85rem; margin-bottom: 1.5rem;">
+      Início da conversa com o Orientador Vocacional IA do FuturoZ Pro 🛡️
+    </div>
+  `;
+
+  // Carregar última análise do histórico para personalizar a primeira mensagem
+  try {
+    const res = await fetch(`/api/historico/${usuarioLogado.id}`);
+    const historico = await res.json();
+    
+    let mensagemBoasVindas = `Olá, **${usuarioLogado.nome.split(' ')[0]}**! Seja muito bem-vindo ao Chat IA do FuturoZ Pro! 🚀\n\nEstou aqui para ajudar você a entender melhor suas opções de carreira, sugerir caminhos de estudo e tirar dúvidas de mercado. Como posso ajudar você hoje?`;
+    
+    if (historico && historico.length > 0) {
+      const ultimaCarreira = historico[0].resultado_ia?.Carreiras?.[0]?.titulo || 'sua área vocacional';
+      mensagemBoasVindas = `Olá, **${usuarioLogado.nome.split(' ')[0]}**! Bom ver você por aqui! 🚀\n\nNotei que no seu último teste vocacional o maior match foi com **${ultimaCarreira}**. Quer conversar mais sobre essa área, planejar seus estudos ou explorar outras possibilidades? Estou pronto!`;
+    }
+
+    adicionarMensagemChat('ia', mensagemBoasVindas);
+  } catch (error) {
+    console.error("Erro ao carregar boas-vindas do chat:", error);
+    adicionarMensagemChat('ia', `Olá, **${usuarioLogado.nome.split(' ')[0]}**! Como posso ajudar você hoje com sua orientação profissional?`);
+  }
+}
+
+function adicionarMensagemChat(remetente, texto) {
+  const container = document.getElementById('chat-messages-container');
+  if (!container) return;
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `mensagem-wrapper ${remetente === 'ia' ? 'mensagem-ia' : 'mensagem-usuario'}`;
+
+  // Formatação markdown muito básica (para negrito e quebras de linha)
+  let textoFormatado = texto
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
+
+  msgDiv.innerHTML = `
+    <div class="mensagem-avatar">${remetente === 'ia' ? '🤖' : '👤'}</div>
+    <div class="mensagem-bubble">${textoFormatado}</div>
+  `;
+
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+async function enviarMensagemChat() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+
+  const texto = input.value.trim();
+  if (texto === '') return;
+
+  // Limpa entrada
+  input.value = '';
+
+  // Adiciona mensagem do usuário
+  adicionarMensagemChat('usuario', texto);
+
+  // Mostra indicador de digitação
+  const indicator = document.getElementById('chat-typing-indicator');
+  if (indicator) indicator.classList.remove('escondido');
+
+  // Rola mensagens
+  const messagesContainer = document.getElementById('chat-messages-container');
+  if (messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ usuario_id: usuarioLogado.id, message: texto })
+    });
+
+    if (!res.ok) {
+      throw new Error('Falha ao obter resposta do assistente.');
+    }
+
+    const dados = await res.json();
+    
+    // Esconde indicador
+    if (indicator) indicator.classList.add('escondido');
+
+    adicionarMensagemChat('ia', dados.response);
+
+  } catch (error) {
+    console.error(error);
+    if (indicator) indicator.classList.add('escondido');
+    adicionarMensagemChat('ia', '⚠️ Desculpe, tive um problema de conexão ao gerar a resposta. Por favor, tente enviar novamente.');
   }
 }
 
@@ -822,6 +1034,11 @@ if (typeof module !== 'undefined' && module.exports) {
     carregarHistorico,
     renderizarListaHistorico,
     abrirResultadoAnterior,
+    assinarPro,
+    abrirChat,
+    iniciarChatIA,
+    adicionarMensagemChat,
+    enviarMensagemChat,
     perguntas,
     getRespostas: () => respostas,
     setResposta: (id, val) => respostas[id] = val,

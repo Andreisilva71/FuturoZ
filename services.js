@@ -20,7 +20,7 @@ function cadastrarUsuarioService(db, dados) {
           [nome, email, senhaCriptografada],
           function (err) {
             if (err) return reject({ status: 500, message: 'Erro ao criar conta.' });
-            resolve({ id: this.lastID, nome, email });
+            resolve({ id: this.lastID, nome, email, plano: 'free' });
           }
         );
       } catch (err) {
@@ -46,7 +46,7 @@ function loginUsuarioService(db, dados) {
         const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
         if (!senhaCorreta) return reject({ status: 401, message: 'Email ou senha incorretos.' });
 
-        resolve({ id: usuario.id, nome: usuario.nome, email: usuario.email });
+        resolve({ id: usuario.id, nome: usuario.nome, email: usuario.email, plano: usuario.plano || 'free' });
       } catch (err) {
         reject({ status: 500, message: 'Erro interno na verificação.' });
       }

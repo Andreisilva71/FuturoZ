@@ -24,7 +24,9 @@
             <a href="#problema">O Desafio</a>
             <a href="#solucao">Solução</a>
             <a href="#como-funciona">Como Funciona</a>
+            <a href="#" onclick="abrirChat(); return false;">Chat IA 💬</a>
             <a href="#" onclick="abrirHistorico(); return false;">Histórico</a>
+            <a href="#" onclick="navegarPara('pro'); return false;" style="font-weight: bold; color: var(--cor-primaria);">Plano Pro 🚀</a>
             <button class="btn btn-icone" onclick="toggleDarkMode()" id="btn-darkmode" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; border-radius: 50%;">🌙</button>
           </div>
 
@@ -58,7 +60,7 @@
           </div>
         </div>
         <div class="hero-imagem-container">
-          <img src="https://images.unsplash.com/photo-1771054244010-ff9c4324a665?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHBlb3BsZSUyMHdvcmtpbmclMjBsYXB0b3AlMjB0ZWNobm9sb2d5fGVufDF8fHx8MTc3NDUyNTY3MHww&ixlib=rb-4.1.0&q=80&w=1080" alt="Jovens" class="hero-imagem">
+          <img src="./hero_main.png" alt="FuturoZ - Planejamento Profissional" class="hero-imagem">
 
         </div>
       </div>
@@ -331,6 +333,160 @@
         <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Você ainda não fez nenhuma análise!</h3>
         <p style="color: var(--cor-texto-claro); margin-bottom: 2rem;">Faça o questionário para descobrir suas carreiras ideais.</p>
         <button class="btn btn-primario" onclick="navegarPara('quiz')">🚀 Começar Questionário</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA PLANO PRO ==================== -->
+  <div id="pagina-pro" class="escondido">
+    <div class="container" style="padding-top: 6rem; padding-bottom: 4rem; min-height: 100vh;">
+      <button class="btn btn-contorno" onclick="navegarPara('landing')" style="margin-bottom: 2rem;">← Voltar</button>
+      
+      <div class="pro-hero" style="text-align: center; max-width: 800px; margin: 0 auto 4rem auto;">
+        <div class="badge">🚀 Plano Premium</div>
+        <h1 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1.5rem;">Eleve sua Carreira com o <span class="texto-gradiente">FuturoZ Pro</span></h1>
+        <p style="font-size: 1.2rem; color: var(--cor-texto-claro);">Desbloqueie ferramentas exclusivas baseadas em Inteligência Artificial para guiar suas escolhas e mapear seu sucesso profissional de forma ilimitada.</p>
+      </div>
+      
+      <div class="pro-grid">
+        <!-- Benefícios -->
+        <div class="pro-beneficios">
+          <h2 style="margin-bottom: 2rem;">Por que ser Pro?</h2>
+          
+          <div class="beneficio-item">
+            <div class="beneficio-icone bg-gradiente">💬</div>
+            <div>
+              <h3>Chat Exclusivo com IA</h3>
+              <p>Converse 24/7 com um assistente virtual de inteligência artificial personalizado. Ele terá acesso ao seu perfil vocacional para tirar dúvidas, dar dicas e sugerir caminhos de estudo de forma personalizada.</p>
+            </div>
+          </div>
+          
+          <div class="beneficio-item">
+            <div class="beneficio-icone bg-gradiente">📊</div>
+            <div>
+              <h3>Relatórios Vocacionais Ilimitados</h3>
+              <p>Refaça o questionário vocacional sempre que quiser. Mapeie sua evolução ao longo do tempo, teste novas respostas e gere novos relatórios completos de forma ilimitada.</p>
+            </div>
+          </div>
+
+          <div class="beneficio-item">
+            <div class="beneficio-icone bg-gradiente">⚡</div>
+            <div>
+              <h3>Análise Prioritária & Completa</h3>
+              <p>Tenha acesso a um poder de processamento superior para que os relatórios gerados pela nossa IA de última geração sejam muito mais rápidos, detalhados e com insights acionáveis.</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Card de Preço -->
+        <div class="card card-preco">
+          <!-- Imagem de fundo preenchendo todo o card -->
+          <img src="./PlanoPro.png" alt="FuturoZ Pro - Descubra seu futuro com IA" class="card-preco-bg">
+          <!-- Overlay gradiente para legibilidade do conteúdo -->
+          <div class="card-preco-overlay"></div>
+
+          <!-- Conteúdo acima da imagem/overlay -->
+          <div class="card-preco-conteudo">
+            <div class="badge" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); color: white; margin-bottom: 1.5rem;">🚀 ASSINATURA MENSAL</div>
+            <h2 style="color: white; font-size: 2.5rem; margin-bottom: 1rem; text-shadow: 0 2px 8px rgba(0,0,0,0.4);">FuturoZ Pro</h2>
+            <p style="color: rgba(255,255,255,0.9); margin-bottom: 2rem; text-shadow: 0 1px 4px rgba(0,0,0,0.4);">Acesso completo e ilimitado a todas as ferramentas premium.</p>
+            
+            <div class="preco-container" style="margin-bottom: 2.5rem;">
+              <span style="font-size: 1.5rem; font-weight: 500; vertical-align: top; position: relative; top: 0.5rem; color: rgba(255,255,255,0.95); text-shadow: 0 2px 8px rgba(0,0,0,0.3);">R$</span>
+              <span style="font-size: 4.5rem; font-weight: 800; line-height: 1; color: white; text-shadow: 0 2px 12px rgba(0,0,0,0.4);">19,90</span>
+              <span style="font-size: 1.25rem; color: rgba(255,255,255,0.95); text-shadow: 0 2px 8px rgba(0,0,0,0.3);">/mês</span>
+            </div>
+            
+            <button class="btn btn-pro-assinar" onclick="assinarPro()" id="btn-pro-action">
+              Assinar Pro Agora
+            </button>
+            
+            <p style="color: rgba(255,255,255,0.75); font-size: 0.85rem; margin-top: 1.5rem; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">Cancele quando quiser. Sem fidelidade.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Seção Comparativa -->
+      <div class="pro-comparativo" style="margin-top: 6rem;">
+        <h2 style="text-align: center; margin-bottom: 3rem;">Compare os Planos</h2>
+        
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; min-width: 600px; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--cor-borda);">
+                <th style="padding: 1rem; font-size: 1.2rem; font-weight: bold; color: var(--cor-texto-escuro);">Recursos</th>
+                <th style="padding: 1rem; font-size: 1.2rem; font-weight: bold; color: var(--cor-texto-claro); text-align: center; width: 250px;">Gratuito (Free)</th>
+                <th style="padding: 1rem; font-size: 1.2rem; font-weight: bold; color: var(--cor-primaria); text-align: center; width: 250px;">Pro (FuturoZ Pro)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--cor-borda);">
+                <td style="padding: 1.25rem 1rem; font-weight: 500;">Questionário Vocacional</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; color: var(--cor-texto-claro);">Apenas 1 vez</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; font-weight: bold; color: var(--cor-primaria);">Ilimitado (Refaça quando quiser)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--cor-borda);">
+                <td style="padding: 1.25rem 1rem; font-weight: 500;">Análise de Perfil por IA</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; color: var(--cor-texto-claro);">Básica (Gemini)</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; font-weight: bold; color: var(--cor-primaria);">Completa e priorizada</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--cor-borda);">
+                <td style="padding: 1.25rem 1rem; font-weight: 500;">Chat Exclusivo com IA</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; color: var(--cor-texto-claro);">❌ Sem acesso</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; font-weight: bold; color: var(--cor-primaria);">✅ Acesso ilimitado 24/7</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--cor-borda);">
+                <td style="padding: 1.25rem 1rem; font-weight: 500;">Histórico de Análises</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; color: var(--cor-texto-claro);">Apenas o último</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; font-weight: bold; color: var(--cor-primaria);">✅ Histórico completo salvo</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--cor-borda);">
+                <td style="padding: 1.25rem 1rem; font-weight: 500;">Valor</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; color: var(--cor-texto-claro);">Grátis</td>
+                <td style="padding: 1.25rem 1rem; text-align: center; font-weight: bold; color: var(--cor-primaria);">R$ 19,90 / mês</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PÁGINA CHAT IA ==================== -->
+  <div id="pagina-chat" class="escondido">
+    <div class="container" style="padding-top: 5rem; padding-bottom: 2rem; height: 100vh; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-shrink: 0;">
+        <button class="btn btn-contorno" onclick="navegarPara('landing')">← Voltar</button>
+        <div class="badge" style="margin: 0;">💬 Orientador Vocacional IA</div>
+      </div>
+
+      <div class="chat-container">
+        <!-- Cabeçalho do Chat -->
+        <div class="chat-header">
+          <div class="avatar-ia">🤖</div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem;">Orientador Vocacional IA</h3>
+            <p style="margin: 0; font-size: 0.8rem; color: #10b981;">● Online e pronto para ajudar</p>
+          </div>
+        </div>
+
+        <!-- Mensagens -->
+        <div class="chat-messages" id="chat-messages-container">
+          <!-- Mensagem inicial de boas-vindas da IA -->
+        </div>
+
+        <!-- Indicador de Digitação -->
+        <div class="chat-typing escondido" id="chat-typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <!-- Entrada de Texto -->
+        <form class="chat-input-area" id="chat-form" onsubmit="enviarMensagemChat(); return false;">
+          <input type="text" id="chat-input" placeholder="Digite sua dúvida sobre carreiras..." autocomplete="off">
+          <button type="submit" class="btn-chat-enviar" id="btn-chat-enviar">Enviar 🚀</button>
+        </form>
       </div>
     </div>
   </div>
