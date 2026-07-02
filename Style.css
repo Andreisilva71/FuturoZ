@@ -154,6 +154,7 @@ button {
 .texto-gradiente {
   background: linear-gradient(to right, var(--cor-primaria), var(--cor-secundaria));
   -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
 }
 
@@ -259,6 +260,7 @@ nav {
   color: var(--cor-texto-escuro);
   opacity: 0.8;
   transition: opacity 0.3s;
+  white-space: nowrap;
 }
 
 .nav-menu a:hover {
@@ -734,7 +736,10 @@ footer {
     position: relative;
     top: auto;
   }
+}
 
+/* Menu responsivo para evitar quebra de layout em telas intermediárias */
+@media (max-width: 1024px) {
   .menu-hamburger {
     display: block;
   }
@@ -966,6 +971,7 @@ body.dark-mode .form-erro {
 .nav-usuario span {
   font-weight: 500;
   color: var(--cor-texto-escuro);
+  white-space: nowrap;
 }
 
 /* ==================== BADGE PRO NAV ==================== */
