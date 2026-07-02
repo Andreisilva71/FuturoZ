@@ -317,16 +317,16 @@ app.post('/api/analisar-perfil', async (req, res) => {
       const plano = user.plano || 'free';
 
       if (plano === 'free') {
-        // Verificar se já possui algum perfil vocacional no banco de dados
-        db.get('SELECT id FROM perfis WHERE usuario_id = ?', [usuario_id], async (err, perfil) => {
+        // Verificar quantos perfis vocacionais o usuário gratuito já possui (limite: 3)
+        db.get('SELECT COUNT(*) AS total FROM perfis WHERE usuario_id = ?', [usuario_id], async (err, row) => {
           if (err) {
             return res.status(500).json({ error: 'Erro interno ao verificar histórico.' });
           }
-          if (perfil) {
-            return res.status(403).json({ error: 'Você já possui um relatório de perfil. Assine o Plano Pro para obter relatórios ilimitados!' });
+          if (row && row.total >= 3) {
+            return res.status(403).json({ error: 'Você já utilizou seus 3 testes vocacionais gratuitos. Assine o Plano Pro para obter relatórios ilimitados!' });
           }
 
-          // Primeiro questionário do usuário gratuito
+          // Usuário gratuito ainda possui testes disponíveis
           executarAnalise();
         });
       } else {

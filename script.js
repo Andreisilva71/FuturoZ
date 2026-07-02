@@ -153,12 +153,12 @@ function navegarPara(pagina) {
     }
 
     if (usuarioLogado.plano !== 'pro') {
-      // Validar histórico antes de permitir começar
+      // Validar histórico antes de permitir começar (limite: 3 testes para plano gratuito)
       fetch(`/api/historico/${usuarioLogado.id}`)
         .then(res => res.json())
         .then(historico => {
-          if (historico && historico.length > 0) {
-            alert('🔒 Você já possui um relatório vocacional! Assine o Plano Pro para refazer o questionário quantas vezes quiser.');
+          if (historico && historico.length >= 3) {
+            alert('🔒 Você já realizou seus 3 testes vocacionais gratuitos! Assine o Plano Pro para refazer o questionário quantas vezes quiser.');
             navegarPara('pro');
           } else {
             executarNavegacao('quiz');
